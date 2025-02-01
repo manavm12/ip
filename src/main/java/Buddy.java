@@ -6,14 +6,14 @@ public class Buddy {
     private static final String GOODBYE = "Alright then! See you later. You know where to find me.";
     private static final String DIVIDER = "--------------------------";
     private static final int maxListLength = 100;
-    private Scanner scanner;
-    private String[] toDoList;
+    private final Scanner scanner;
+    private final Task[] toDoList;
     private int taskCount;
 
 
     public Buddy() {
         this.scanner = new Scanner(System.in);
-        this.toDoList = new String[maxListLength];
+        this.toDoList = new Task[maxListLength];
         this.taskCount = 0;
     }
 
@@ -22,7 +22,7 @@ public class Buddy {
     }
 
     private void addToList(String input){
-        toDoList[taskCount]=input;
+        toDoList[taskCount]= new Task(input);
         taskCount++;
         printDivider();
         System.out.println("Added: "+input);
@@ -33,7 +33,8 @@ public class Buddy {
         printDivider();
         for (int i = 0; i < taskCount; i++){
             int index = i+1;
-            System.out.println(index + ": " + toDoList[i]);
+            Task task = toDoList[i];
+            System.out.println(index + ".["+ task.getStatusIcon() + "] " + task.description);
         }
         printDivider();
     }
@@ -50,6 +51,30 @@ public class Buddy {
         printDivider();
     }
 
+    private void markTaskAsDone(String input){
+        int index = Integer.parseInt(input.split(" ")[1])-1;
+        if (index >= 0 && index < taskCount){
+            Task task = toDoList[index];
+            task.markAsDone();
+            System.out.println("There you go! Good job finishing that task");
+            System.out.println("    ["+ task.getStatusIcon() + "] " + task.description);
+        } else {
+            System.out.println("I'm sorry, but you need to enter a valid index");
+        }
+    }
+
+    private void unMarkTaskAsDone(String input){
+        int index = Integer.parseInt(input.split(" ")[1])-1;
+        if (index >= 0 && index < taskCount){
+            Task task = toDoList[index];
+            task.markAsNotDone();
+            System.out.println("I've marked this task as not done. Go for it and complete it!");
+            System.out.println("    ["+ task.getStatusIcon() + "] " + task.description);
+        } else {
+            System.out.println("I'm sorry, but you need to enter a valid index");
+        }
+    }
+
     public void start() {
         setIntroduction();
         String input = scanner.nextLine();
@@ -59,6 +84,10 @@ public class Buddy {
                 break;
             } else if (input.equals("list")) {
                 listTasks();
+            } else if (input.startsWith("mark ")) {
+                markTaskAsDone(input);
+            } else if (input.startsWith("unmark ")) {
+                unMarkTaskAsDone(input);
             } else {
                 addToList(input);
             }
