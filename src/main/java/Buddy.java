@@ -1,15 +1,39 @@
+import java.util.Scanner;
+
 public class Buddy {
+    private static final String INTRODUCTION = "Yo! I'm Buddy! Your friendly neighbourhood chatbot.\nWhat can I help you with today?";
+    private static final String GOODBYE = "Alright then! See you later. You know where to find me.";
+    private static final String DIVIDER = "--------------------------";
+    private Scanner scanner;
+
+    public Buddy() {
+        this.scanner = new Scanner(System.in);
+    }
+
+    private void printDivider(){
+        System.out.println(DIVIDER);
+    }
+
+    public void start() {
+        printDivider();
+        System.out.println(INTRODUCTION);
+        printDivider();
+
+        String input = scanner.nextLine();
+        while(!input.equals("bye")){
+            printDivider();
+            System.out.println("    " + input);
+            printDivider();
+            input = scanner.nextLine();
+        }
+
+        printDivider();
+        System.out.println(GOODBYE);
+        printDivider();
+    }
+
     public static void main(String[] args) {
-        String introduction = "Hello! I'm Buddy!";
-        String goodbye = "Bye. Hope to see you soon!";
-        String divider = "--------------------------";
-
-        System.out.println(divider);
-        System.out.println(introduction);
-        System.out.println("What can I do for you?");
-        System.out.println(divider);
-        System.out.println(goodbye);
-        System.out.println(divider);
-
+        Buddy buddy = new Buddy();
+        buddy.start();
     }
 }
