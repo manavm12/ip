@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Buddy {
@@ -22,11 +21,56 @@ public class Buddy {
     }
 
     private void addToList(String input){
-        toDoList[taskCount]= new Task(input);
+        if(input.startsWith("todo")){
+            addTodo(input);
+        } else if (input.startsWith("deadline")){
+            addDeadline(input);
+        } else if (input.startsWith("event")){
+            addEvent(input);
+        }else {
+            System.out.println("It would be cool if you could segregate your task into todo, deadline or event");
+        }
+        printDivider();
+        printDivider();
+    }
+
+    private void addTodo(String input){
+        String task = input.substring(5);
+        toDoList[taskCount]= new Todo(task);
         taskCount++;
-        printDivider();
-        System.out.println("Added: "+input);
-        printDivider();
+        System.out.println("Understood buddy! I've added it to your Task list");
+        System.out.println("    "+ toDoList[taskCount-1].toString());
+        System.out.println("You know what to do with " + taskCount + " tasks!");
+    }
+
+    private void addDeadline(String input){
+        String taskName = input.substring(9).split("/")[0];
+        String taskDeadline = input.substring(9).split("/")[1];
+        if (taskDeadline.startsWith("by")){
+            taskDeadline = taskDeadline.substring(3);
+        }
+        toDoList[taskCount]= new Deadline(taskName,taskDeadline);
+        taskCount++;
+        System.out.println("Understood buddy! I've added it to your Task list");
+        System.out.println("    "+ toDoList[taskCount-1].toString());
+        System.out.println("You know what to do with " + taskCount + " tasks!");
+    }
+
+    private void addEvent(String input){
+        String taskName = input.substring(6).split("/")[0];
+        String taskStart = input.substring(6).split("/")[1];
+        if (taskStart.startsWith("from")){
+            taskStart = taskStart.substring(5);
+        }
+        String taskEnd = input.substring(6).split("/")[2];
+        if (taskEnd.startsWith("to")){
+            taskEnd = taskEnd.substring(3);
+        }
+        toDoList[taskCount]= new Event(taskName,taskStart,taskEnd);
+        taskCount++;
+        System.out.println("Understood buddy! I've added it to your Task list");
+        System.out.println("    "+ toDoList[taskCount-1].toString());
+        System.out.println("You know what to do with " + taskCount + " tasks!");
     }
 
     private void listTasks(){
@@ -34,7 +78,7 @@ public class Buddy {
         for (int i = 0; i < taskCount; i++){
             int index = i+1;
             Task task = toDoList[i];
-            System.out.println(index + ".["+ task.getStatusIcon() + "] " + task.description);
+            System.out.println(index + ". " + task.toString());
         }
         printDivider();
     }
@@ -57,7 +101,7 @@ public class Buddy {
             Task task = toDoList[index];
             task.markAsDone();
             System.out.println("There you go! Good job finishing that task");
-            System.out.println("    ["+ task.getStatusIcon() + "] " + task.description);
+            System.out.println(task.toString());
         } else {
             System.out.println("I'm sorry, but you need to enter a valid index");
         }
@@ -69,7 +113,7 @@ public class Buddy {
             Task task = toDoList[index];
             task.markAsNotDone();
             System.out.println("I've marked this task as not done. Go for it and complete it!");
-            System.out.println("    ["+ task.getStatusIcon() + "] " + task.description);
+            System.out.println(task.toString());
         } else {
             System.out.println("I'm sorry, but you need to enter a valid index");
         }
