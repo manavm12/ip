@@ -1,5 +1,7 @@
 import exceptions.BuddyException;
 import exceptions.EmptyTaskDescriptionException;
+import exceptions.InvalidDeadlineFormatException;
+import exceptions.InvalidEventFormatException;
 
 import java.util.Scanner;
 
@@ -71,30 +73,38 @@ public class Buddy {
         addResponse();
     }
 
-    private void addDeadline(String input) throws EmptyTaskDescriptionException{
-        if (input.trim().equals("deadline")){
+    private void addDeadline(String input) throws EmptyTaskDescriptionException, InvalidDeadlineFormatException {
+        if (input.trim().equals("deadline")) {
             throw new EmptyTaskDescriptionException("deadline");
         }
-        String taskName = input.substring(9).split("/")[0];
-        String taskDeadline = input.substring(9).split("/")[1];
-        if (taskDeadline.startsWith("by")){
+        String deadlineDetails[] = input.substring(9).split("/");
+        if (deadlineDetails.length < 2) {
+            throw new InvalidDeadlineFormatException();
+        }
+        String taskName = deadlineDetails[0];
+        String taskDeadline = deadlineDetails[1];
+        if (taskDeadline.startsWith("by")) {
             taskDeadline = taskDeadline.substring(3);
         }
-        taskList[taskCount]= new Deadline(taskName,taskDeadline);
+        taskList[taskCount] = new Deadline(taskName, taskDeadline);
         taskCount++;
-        addResponse();;
+        addResponse();
     }
 
-    private void addEvent(String input) throws EmptyTaskDescriptionException{
+    private void addEvent(String input) throws EmptyTaskDescriptionException, InvalidEventFormatException {
         if (input.trim().equals("event")){
             throw new EmptyTaskDescriptionException("event");
         }
-        String taskName = input.substring(6).split("/")[0];
-        String taskStart = input.substring(6).split("/")[1];
+        String eventDetails[] = input.substring(6).split("/");
+        if (eventDetails.length < 3) {
+            throw new InvalidEventFormatException();
+        }
+        String taskName = eventDetails[0];
+        String taskStart = eventDetails[1];
         if (taskStart.startsWith("from")){
             taskStart = taskStart.substring(5);
         }
-        String taskEnd = input.substring(6).split("/")[2];
+        String taskEnd = eventDetails[2];
         if (taskEnd.startsWith("to")){
             taskEnd = taskEnd.substring(3);
         }
