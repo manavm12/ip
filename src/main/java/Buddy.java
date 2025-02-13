@@ -122,26 +122,36 @@ public class Buddy {
 
 
     private void markTaskAsDone(String input){
-        int index = Integer.parseInt(input.split(" ")[1])-1;
-        if (index >= 0 && index < taskCount){
+        try {
+            int index = Integer.parseInt(input.split(" ")[1]) - 1;
+            if (index < 0 || index >= taskCount) {
+                throw new InvalidTaskIndexException();
+            }
             Task task = taskList[index];
             task.markAsDone();
             System.out.println("There you go! Good job finishing that task");
             System.out.println(task.toString());
-        } else {
-            System.out.println("I'm sorry, but you need to enter a valid index");
+        }catch (InvalidTaskIndexException e){
+            System.out.println(e.getMessage());
+        }catch (NumberFormatException e){
+            System.out.println("Whoa! I need a valid task number. Try something like: mark 2");
         }
     }
 
     private void unMarkTaskAsDone(String input){
-        int index = Integer.parseInt(input.split(" ")[1])-1;
-        if (index >= 0 && index < taskCount){
+        try {
+            int index = Integer.parseInt(input.split(" ")[1]) - 1;
+            if (index < 0 || index >= taskCount) {
+                throw new InvalidTaskIndexException();
+            }
             Task task = taskList[index];
             task.markAsNotDone();
             System.out.println("I've marked this task as not done. Go for it and complete it!");
             System.out.println(task.toString());
-        } else {
-            System.out.println("I'm sorry, but you need to enter a valid index");
+        } catch (InvalidTaskIndexException e){
+            System.out.println(e.getMessage());
+        } catch (NumberFormatException e){
+            System.out.println("Whoa! I need a valid task number. Try something like: unmark 2");
         }
     }
 
