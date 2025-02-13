@@ -1,3 +1,6 @@
+import exceptions.BuddyException;
+import exceptions.EmptyTaskDescriptionException;
+
 import java.util.Scanner;
 
 public class Buddy {
@@ -33,34 +36,45 @@ public class Buddy {
         printDivider();
     }
 
-    private void addToList(String input){
-        if(input.startsWith("todo")){
-            addTodo(input);
-        } else if (input.startsWith("deadline")){
-            addDeadline(input);
-        } else if (input.startsWith("event")){
-            addEvent(input);
-        }else {
-            System.out.println("It would be cool if you could segregate your task into todo, deadline or event");
+    private void addToList(String input) {
+        try {
+            if (input.startsWith("todo")) {
+                addTodo(input);
+            } else if (input.startsWith("deadline")) {
+                addDeadline(input);
+            } else if (input.startsWith("event")) {
+                addEvent(input);
+            } else {
+                System.out.println("It would be cool if you could segregate your task into todo, deadline or event");
+            }
+            printDivider();
+            printDivider();
+        } catch (BuddyException e) {
+            System.out.println(e.getMessage());
+            printDivider();
         }
-        printDivider();
-        printDivider();
     }
 
-    private void addedToListResponse(){
+    private void addResponse(){
         System.out.println("Understood buddy! I've added it to your Task list");
         System.out.println("    "+ taskList[taskCount-1].toString());
         System.out.println("You know what to do with " + taskCount + " tasks!");
     }
 
-    private void addTodo(String input){
+    private void addTodo(String input) throws EmptyTaskDescriptionException{
+        if (input.trim().equals("todo")){
+            throw new EmptyTaskDescriptionException("todo");
+        }
         String task = input.substring(5);
         taskList[taskCount]= new Todo(task);
         taskCount++;
-        addedToListResponse();
+        addResponse();
     }
 
-    private void addDeadline(String input){
+    private void addDeadline(String input) throws EmptyTaskDescriptionException{
+        if (input.trim().equals("deadline")){
+            throw new EmptyTaskDescriptionException("deadline");
+        }
         String taskName = input.substring(9).split("/")[0];
         String taskDeadline = input.substring(9).split("/")[1];
         if (taskDeadline.startsWith("by")){
@@ -68,10 +82,13 @@ public class Buddy {
         }
         taskList[taskCount]= new Deadline(taskName,taskDeadline);
         taskCount++;
-        addedToListResponse();;
+        addResponse();;
     }
 
-    private void addEvent(String input){
+    private void addEvent(String input) throws EmptyTaskDescriptionException{
+        if (input.trim().equals("event")){
+            throw new EmptyTaskDescriptionException("event");
+        }
         String taskName = input.substring(6).split("/")[0];
         String taskStart = input.substring(6).split("/")[1];
         if (taskStart.startsWith("from")){
@@ -83,7 +100,7 @@ public class Buddy {
         }
         taskList[taskCount]= new Event(taskName,taskStart,taskEnd);
         taskCount++;
-        addedToListResponse();;
+        addResponse();;
     }
 
     private void listTasks(){
