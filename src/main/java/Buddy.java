@@ -1,7 +1,4 @@
-import exceptions.BuddyException;
-import exceptions.EmptyTaskDescriptionException;
-import exceptions.InvalidDeadlineFormatException;
-import exceptions.InvalidEventFormatException;
+import exceptions.*;
 
 import java.util.Scanner;
 
@@ -38,7 +35,7 @@ public class Buddy {
         printDivider();
     }
 
-    private void addToList(String input) {
+    private void addToList(String input){
         try {
             if (input.startsWith("todo")) {
                 addTodo(input);
@@ -47,7 +44,7 @@ public class Buddy {
             } else if (input.startsWith("event")) {
                 addEvent(input);
             } else {
-                System.out.println("It would be cool if you could segregate your task into todo, deadline or event");
+                throw new UnknownCommandException();
             }
             printDivider();
             printDivider();
