@@ -1,6 +1,7 @@
 import exceptions.*;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Buddy {
     private static final String INTRODUCTION = "Yo! I'm Buddy! Your friendly neighbourhood chatbot.\nWhat can I help you with today?";
@@ -9,13 +10,12 @@ public class Buddy {
 
     private final Scanner scanner;
 
-    private final Task[] taskList;
+    private final ArrayList<Task> taskList = new ArrayList<>();
     private int taskCount;
-    private static final int MAX_LIST_LENGTH = 100;
+
 
     public Buddy() {
         this.scanner = new Scanner(System.in);
-        this.taskList = new Task[MAX_LIST_LENGTH];
         this.taskCount = 0;
     }
 
@@ -56,7 +56,7 @@ public class Buddy {
 
     private void addResponse(){
         System.out.println("Understood buddy! I've added it to your Task list");
-        System.out.println("    "+ taskList[taskCount-1].toString());
+        System.out.println("    "+ taskList.get(taskCount-1).toString());
         System.out.println("You know what to do with " + taskCount + " tasks!");
     }
 
@@ -65,7 +65,7 @@ public class Buddy {
             throw new EmptyTaskDescriptionException("todo");
         }
         String task = input.substring(5);
-        taskList[taskCount]= new Todo(task);
+        taskList.add(new Todo(task));
         taskCount++;
         addResponse();
     }
@@ -74,7 +74,7 @@ public class Buddy {
         if (input.trim().equals("deadline")) {
             throw new EmptyTaskDescriptionException("deadline");
         }
-        String deadlineDetails[] = input.substring(9).split("/");
+        String[] deadlineDetails = input.substring(9).split("/");
         if (deadlineDetails.length < 2) {
             throw new InvalidDeadlineFormatException();
         }
@@ -83,7 +83,7 @@ public class Buddy {
         if (taskDeadline.startsWith("by")) {
             taskDeadline = taskDeadline.substring(3);
         }
-        taskList[taskCount] = new Deadline(taskName, taskDeadline);
+        taskList.add(new Deadline(taskName, taskDeadline));
         taskCount++;
         addResponse();
     }
@@ -92,7 +92,7 @@ public class Buddy {
         if (input.trim().equals("event")){
             throw new EmptyTaskDescriptionException("event");
         }
-        String eventDetails[] = input.substring(6).split("/");
+        String[] eventDetails = input.substring(6).split("/");
         if (eventDetails.length < 3) {
             throw new InvalidEventFormatException();
         }
@@ -105,16 +105,16 @@ public class Buddy {
         if (taskEnd.startsWith("to")){
             taskEnd = taskEnd.substring(3);
         }
-        taskList[taskCount]= new Event(taskName,taskStart,taskEnd);
+        taskList.add(new Event(taskName,taskStart,taskEnd));
         taskCount++;
-        addResponse();;
+        addResponse();
     }
 
     private void listTasks(){
         printDivider();
         for (int i = 0; i < taskCount; i++){
             int index = i+1;
-            Task task = taskList[i];
+            Task task = taskList.get(i);
             System.out.println(index + ". " + task.toString());
         }
         printDivider();
@@ -127,10 +127,10 @@ public class Buddy {
             if (index < 0 || index >= taskCount) {
                 throw new InvalidTaskIndexException();
             }
-            Task task = taskList[index];
+            Task task = taskList.get(index);
             task.markAsDone();
             System.out.println("There you go! Good job finishing that task");
-            System.out.println(task.toString());
+            System.out.println(task);
         }catch (InvalidTaskIndexException e){
             System.out.println(e.getMessage());
         }catch (NumberFormatException e){
@@ -144,10 +144,10 @@ public class Buddy {
             if (index < 0 || index >= taskCount) {
                 throw new InvalidTaskIndexException();
             }
-            Task task = taskList[index];
+            Task task = taskList.get(index);
             task.markAsNotDone();
             System.out.println("I've marked this task as not done. Go for it and complete it!");
-            System.out.println(task.toString());
+            System.out.println(task);
         } catch (InvalidTaskIndexException e){
             System.out.println(e.getMessage());
         } catch (NumberFormatException e){
