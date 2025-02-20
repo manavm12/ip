@@ -1,8 +1,13 @@
 import exceptions.*;
-
+import java.io.*;
 import java.util.Scanner;
 
 public class Buddy {
+
+    private static final String FILE_PATH = "data/duke.txt";
+    private static final String DIRECTORY_PATH = "data";
+
+
     private static final String INTRODUCTION = "Yo! I'm Buddy! Your friendly neighbourhood chatbot.\nWhat can I help you with today?";
     private static final String GOODBYE = "Alright then! See you later. You know where to find me.";
     private static final String DIVIDER = "--------------------------";
@@ -17,6 +22,7 @@ public class Buddy {
         this.scanner = new Scanner(System.in);
         this.taskList = new Task[MAX_LIST_LENGTH];
         this.taskCount = 0;
+        loadTasksFromFile();
     }
 
     private void printDivider(){
@@ -46,7 +52,7 @@ public class Buddy {
             } else {
                 throw new UnknownCommandException();
             }
-            printDivider();
+            saveTasksToFile();
             printDivider();
         } catch (BuddyException e) {
             System.out.println(e.getMessage());
@@ -107,7 +113,7 @@ public class Buddy {
         }
         taskList[taskCount]= new Event(taskName,taskStart,taskEnd);
         taskCount++;
-        addResponse();;
+        addResponse();
     }
 
     private void listTasks(){
@@ -129,8 +135,9 @@ public class Buddy {
             }
             Task task = taskList[index];
             task.markAsDone();
+            saveTasksToFile();
             System.out.println("There you go! Good job finishing that task");
-            System.out.println(task.toString());
+            System.out.println(task);
         }catch (InvalidTaskIndexException e){
             System.out.println(e.getMessage());
         }catch (NumberFormatException e){
@@ -146,14 +153,93 @@ public class Buddy {
             }
             Task task = taskList[index];
             task.markAsNotDone();
+            saveTasksToFile();
             System.out.println("I've marked this task as not done. Go for it and complete it!");
-            System.out.println(task.toString());
+            System.out.println(task);
         } catch (InvalidTaskIndexException e){
             System.out.println(e.getMessage());
         } catch (NumberFormatException e){
             System.out.println("Whoa! I need a valid task number. Try something like: unmark 2");
         }
     }
+
+    private void saveTasksToFile(){
+        try {
+            File dir = new File(DIRECTORY_PATH);
+            if (!dir.exists()) {
+                boolean isCreated = dir.mkdir();
+                if (!isCreated) {
+                    System.out.println("Warning: Failed to create directory 'data'.");
+                    return;
+                }
+            }
+            FileWriter fw = new FileWriter(FILE_PATH);
+            for (int i = 0; i < taskCount; i++) {
+                fw.write(taskList[i].toFileFormat() + System.lineSeparator());
+            }
+            fw.close();
+        } catch (IOException e) {
+            System.out.println("Error saving tasks: " + e.getMessage());
+        }
+    }
+
+    private void loadTasksFromFile() {
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
+            return;
+        }
+
+        try {
+            Scanner fileScanner = new Scanner(file);
+            while (fileScanner.hasNext()) {
+                String line = fileScanner.nextLine();
+                String[] parts = line.split(" \\| ");
+
+                if (parts.length < 3) {
+                    System.out.println("Warning: Skipping corrupted line - " + line);
+                    continue;
+                }
+
+                Task task;
+                String type = parts[0];
+                boolean isDone = parts[1].equals("1");
+                String description = parts[2];
+
+                if (type.equals("T")) {
+                    task = new Todo(description);
+                } else if (type.equals("D")) {
+                    if (parts.length < 4) {
+                        System.out.println("Warning: Skipping corrupted deadline line - " + line);
+                        continue;
+                    }
+                    String by = parts[3];
+                    task = new Deadline(description, by);
+                } else if (type.equals("E")) {
+                    if (parts.length < 5) {
+                        System.out.println("Warning: Skipping corrupted event line - " + line);
+                        continue;
+                    }
+                    String from = parts[3];
+                    String to = parts[4];
+                    task = new Event(description, from, to);
+                } else {
+                    System.out.println("Warning: Skipping unknown task type - " + line);
+                    continue;
+                }
+
+                // ✅ Mark task as done if needed
+                if (isDone) {
+                    task.markAsDone();
+                }
+
+                taskList[taskCount++] = task;
+            }
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("No previous tasks found.");
+        }
+    }
+
 
     public void start() {
         setIntroduction();
