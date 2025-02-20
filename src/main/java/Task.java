@@ -19,6 +19,10 @@ public class Task {
         isDone = false;
     }
 
+    public String toFileFormat() {
+        return "";
+    }
+
     @Override
     public String toString() {
         return "["+ this.getStatusIcon() + "] " + this.description;
