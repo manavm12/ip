@@ -155,6 +155,16 @@ public class Buddy {
         }
     }
 
+    private void deleteTasks(String input){
+        int index = Integer.parseInt(input.split(" ")[1]) - 1;
+        Task task = taskList.get(index);
+        taskList.remove(task);
+        taskCount--;
+        System.out.println("Done. I have deleted this task");
+        System.out.println(task);
+        System.out.println("Now you have " + taskCount + " tasks remaining");
+    }
+
     public void start() {
         setIntroduction();
         String input = scanner.nextLine();
@@ -168,7 +178,9 @@ public class Buddy {
                 markTaskAsDone(input);
             } else if (input.startsWith("unmark ")) {
                 unMarkTaskAsDone(input);
-            } else {
+            } else if (input.startsWith("delete ")) {
+                deleteTasks(input);
+            }  else {
                 addToList(input);
             }
             input = scanner.nextLine();
