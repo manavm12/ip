@@ -156,13 +156,22 @@ public class Buddy {
     }
 
     private void deleteTasks(String input){
-        int index = Integer.parseInt(input.split(" ")[1]) - 1;
-        Task task = taskList.get(index);
-        taskList.remove(task);
-        taskCount--;
-        System.out.println("Done. I have deleted this task");
-        System.out.println(task);
-        System.out.println("Now you have " + taskCount + " tasks remaining");
+        try {
+            int index = Integer.parseInt(input.split(" ")[1]) - 1;
+            if (index < 0 || index >= taskCount) {
+                throw new InvalidTaskIndexException();
+            }
+            Task task = taskList.get(index);
+            taskList.remove(task);
+            taskCount--;
+            System.out.println("Done. I have deleted this task");
+            System.out.println(task);
+            System.out.println("Now you have " + taskCount + " tasks remaining");
+        }catch (InvalidTaskIndexException e){
+            System.out.println(e.getMessage());
+        } catch (NumberFormatException e){
+            System.out.println("Whoa! I need a valid task number. Try something like: delete 1");
+        }
     }
 
     public void start() {
