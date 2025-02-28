@@ -9,7 +9,8 @@ public class Event extends Task{
     }
 
     public String toFileFormat() {
-        return "E | " + (isDone ? "1" : "0") + " | " + description + " | " + from + " | " + to;
+        String status = (isDone ? "1" : "0");
+        return "E | " + status + " | " + description + " | " + from + " | " + to;
     }
 
     @Override
