@@ -10,7 +10,7 @@ import Buddy.exceptions.BuddyException;
 import Buddy.ui.Ui;
 import Buddy.storage.Storage;
 
-import java.time.DateTimeException;
+import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -177,14 +177,21 @@ public class TaskList {
     }
 
     private String formatDate(String date) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
+        DateTimeFormatter[] inputFormatters = {
+            DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+        };
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mma");
-        try{
-            LocalDateTime dateTime = LocalDateTime.parse(date, inputFormatter);
-            return dateTime.format(outputFormatter);
-        } catch (DateTimeException e) {
-            return date;
+        for (DateTimeFormatter formatter : inputFormatters) {
+            try {
+                LocalDateTime dateTime = LocalDateTime.parse(date.trim(), formatter);
+                return dateTime.format(outputFormatter);
+            } catch (DateTimeParseException ignored) {
+
+            }
         }
+
+        return date;
     }
 
 }
