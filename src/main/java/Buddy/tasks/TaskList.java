@@ -10,7 +10,12 @@ import Buddy.exceptions.BuddyException;
 import Buddy.ui.Ui;
 import Buddy.storage.Storage;
 
+import java.time.DateTimeException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+import java.time.LocalDateTime;
+
 
 
 public class TaskList {
@@ -72,7 +77,7 @@ public class TaskList {
         String taskDeadline = deadlineDetails[1];
 
         if (taskDeadline.startsWith("by")) {
-            taskDeadline = taskDeadline.substring(3);
+            taskDeadline = formatDate(taskDeadline.substring(3));
         }
 
         taskList.add(new Deadline(taskName, taskDeadline));
@@ -96,10 +101,10 @@ public class TaskList {
         String taskEnd = eventDetails[2];
 
         if (taskStart.startsWith("from")){
-            taskStart = taskStart.substring(5);
+            taskStart = formatDate(taskStart.substring(5));
         }
         if (taskEnd.startsWith("to")){
-            taskEnd = taskEnd.substring(3);
+            taskEnd = formatDate(taskEnd.substring(3));
         }
 
         taskList.add(new Event(taskName,taskStart,taskEnd));
@@ -169,6 +174,17 @@ public class TaskList {
 
     public  ArrayList<Task> getTaskList(){
         return taskList;
+    }
+
+    private String formatDate(String date) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mma");
+        try{
+            LocalDateTime dateTime = LocalDateTime.parse(date, inputFormatter);
+            return dateTime.format(outputFormatter);
+        } catch (DateTimeException e) {
+            return date;
+        }
     }
 
 }
