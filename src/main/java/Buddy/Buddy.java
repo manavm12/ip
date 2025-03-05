@@ -1,9 +1,15 @@
-import exceptions.EmptyTaskDescriptionException;
-import exceptions.InvalidDeadlineFormatException;
-import exceptions.InvalidEventFormatException;
-import exceptions.InvalidTaskIndexException;
-import exceptions.UnknownCommandException;
-import exceptions.BuddyException;
+package Buddy;
+
+import Buddy.exceptions.EmptyTaskDescriptionException;
+import Buddy.exceptions.InvalidDeadlineFormatException;
+import Buddy.exceptions.InvalidEventFormatException;
+import Buddy.exceptions.InvalidTaskIndexException;
+import Buddy.exceptions.UnknownCommandException;
+import Buddy.exceptions.BuddyException;
+import Buddy.tasks.Deadline;
+import Buddy.tasks.Event;
+import Buddy.tasks.Task;
+import Buddy.tasks.Todo;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,7 +24,7 @@ public class Buddy {
     private static final String DIRECTORY_PATH = "data";
 
 
-    private static final String INTRODUCTION = "Yo! I'm Buddy! Your friendly neighbourhood chatbot.\nWhat can I help you with today?";
+    private static final String INTRODUCTION = "Yo! I'm Buddy.Buddy! Your friendly neighbourhood chatbot.\nWhat can I help you with today?";
     private static final String GOODBYE = "Alright then! See you later. You know where to find me.";
     private static final String DIVIDER = "--------------------------";
     private static final String WARNING = "Warning: Skipping corrupted deadline line - ";
@@ -73,7 +79,7 @@ public class Buddy {
     }
 
     private void addResponse() {
-        System.out.println("Understood buddy! I've added it to your Task list");
+        System.out.println("Understood buddy! I've added it to your Buddy.Buddy.taskList.Task list");
 
         String lastTask = taskList.get(taskCount - 1).toString();
         System.out.println("    " + lastTask);

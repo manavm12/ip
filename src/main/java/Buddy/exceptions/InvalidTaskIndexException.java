@@ -1,4 +1,4 @@
-package exceptions;
+package Buddy.exceptions;
 
 public class InvalidTaskIndexException extends BuddyException {
     public InvalidTaskIndexException() {

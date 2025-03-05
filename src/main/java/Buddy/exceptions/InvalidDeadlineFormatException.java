@@ -1,4 +1,4 @@
-package exceptions;
+package Buddy.exceptions;
 
 public class InvalidDeadlineFormatException extends BuddyException {
     public InvalidDeadlineFormatException() {

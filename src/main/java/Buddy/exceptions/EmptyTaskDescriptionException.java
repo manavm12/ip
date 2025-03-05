@@ -1,4 +1,4 @@
-package exceptions;
+package Buddy.exceptions;
 
 public class EmptyTaskDescriptionException extends BuddyException{
     public EmptyTaskDescriptionException(String taskType) {
