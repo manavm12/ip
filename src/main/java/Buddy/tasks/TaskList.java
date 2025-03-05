@@ -171,4 +171,22 @@ public class TaskList {
         return taskList;
     }
 
+    public void findTask(String input) {
+        String keyword = input.split(" ")[1];
+        ui.findTaskMessage();
+
+        int index = 1;
+        for (Task task : taskList) {
+            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                System.out.println(index + "." + task.toString());
+                index++;
+            }
+        }
+
+        if (index == 1) {
+            ui.noTaskFoundMessage();
+        }
+
+    }
+
 }
