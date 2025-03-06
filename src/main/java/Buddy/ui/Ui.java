@@ -74,4 +74,12 @@ public class Ui {
         System.out.println("Whoa! I need a valid task number. Try something like: delete 1");
     }
 
+    public void findTaskMessage() {
+        System.out.println("Here are the matching tasks in your list: ");
+    }
+
+    public void noTaskFoundMessage() {
+        System.out.println("I'm so sorry, but there is no matching task");
+    }
+
 }
