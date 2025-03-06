@@ -12,10 +12,8 @@ import Buddy.storage.Storage;
 
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
 
 
 public class TaskList {
@@ -237,10 +235,47 @@ public class TaskList {
         return taskList;
     }
 
+    /**
+     * Searches for tasks that contain the given keyword in their description.
+     * <p>
+     * Iterates through the list of tasks and prints all tasks whose description
+     * contains the specified keyword. If no matching tasks are found,
+     * a message is displayed.
+     *
+     * @param input The user input containing the "find" command followed by the keyword.
+     */
+    public void findTask(String input) {
+        String keyword = input.split(" ")[1];
+        ui.findTaskMessage();
+
+        int index = 1;
+        for (Task task : taskList) {
+            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                System.out.println(index + "." + task);
+                index++;
+            }
+        }
+
+        if (index == 1) {
+            ui.noTaskFoundMessage();
+        }
+
+    }
+
+    /**
+     * Converts a date string from a recognized input format into a readable format.
+     * <p>
+     * The method attempts to parse the input date string using supported formats.
+     * If successful, it returns the date formatted as "MMM dd yyyy, hh:mma".
+     * If the input does not match any expected formats, the original string is returned.
+     *
+     * @param date The date string to be formatted.
+     * @return The formatted date string in "MMM dd yyyy, hh:mma" format, or the original input if parsing fails.
+     */
     private String formatDate(String date) {
         DateTimeFormatter[] inputFormatters = {
-            DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm"),
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+                DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm"),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
         };
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mma");
         for (DateTimeFormatter formatter : inputFormatters) {
@@ -251,7 +286,6 @@ public class TaskList {
 
             }
         }
-
         return date;
     }
 
