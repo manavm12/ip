@@ -17,6 +17,14 @@ public class Parser {
         return input.split(" ")[0];
     }
 
+    /**
+     * Parses and executes the given user command.
+     * <p>
+     * Identifies the command type from the input and performs the corresponding action.
+     * If the command is unrecognized, it is treated as a task addition.
+     *
+     * @param input The full user input string.
+     */
     public void parseCommand(String input) {
         String command = getCommand(input);
         switch (command) {

@@ -18,6 +18,16 @@ public class Storage {
 
     private static final String WARNING = "Warning: Skipping corrupted deadline line - ";
 
+    /**
+     * Saves the current list of tasks to a file to maintain continuity.
+     * <p>
+     * This method writes all tasks from the given list to a file so that they
+     * can be retrieved when the chatbot is restarted. If the storage directory
+     * does not exist, it attempts to create one. If an I/O error occurs, an
+     * error message is printed.
+     *
+     * @param taskList The list of tasks to be saved to the file.
+     */
     public void saveTasksToFile(ArrayList<Task> taskList) {
         try {
             File dir = new File(DIRECTORY_PATH);
@@ -40,6 +50,15 @@ public class Storage {
         }
     }
 
+    /**
+     * Loads tasks from a file and returns them as a list.
+     * <p>
+     * Reads stored tasks from the file and reconstructs them into a list.
+     * If the file does not exist, returns an empty list. Prints a warning
+     * for invalid or corrupted entries.
+     *
+     * @return A list of tasks loaded from the file.
+     */
     public ArrayList<Task> loadTasksFromFile() {
         File file = new File(FILE_PATH);
         ArrayList<Task> tasklist = new ArrayList<>();
