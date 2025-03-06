@@ -10,6 +10,9 @@ import Buddy.exceptions.BuddyException;
 import Buddy.ui.Ui;
 import Buddy.storage.Storage;
 
+import java.time.format.DateTimeParseException;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
@@ -72,7 +75,7 @@ public class TaskList {
         String taskDeadline = deadlineDetails[1];
 
         if (taskDeadline.startsWith("by")) {
-            taskDeadline = taskDeadline.substring(3);
+            taskDeadline = formatDate(taskDeadline.substring(3));
         }
 
         taskList.add(new Deadline(taskName, taskDeadline));
@@ -96,10 +99,10 @@ public class TaskList {
         String taskEnd = eventDetails[2];
 
         if (taskStart.startsWith("from")){
-            taskStart = taskStart.substring(5);
+            taskStart = formatDate(taskStart.substring(5));
         }
         if (taskEnd.startsWith("to")){
-            taskEnd = taskEnd.substring(3);
+            taskEnd = formatDate(taskEnd.substring(3));
         }
 
         taskList.add(new Event(taskName,taskStart,taskEnd));
@@ -178,7 +181,7 @@ public class TaskList {
         int index = 1;
         for (Task task : taskList) {
             if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                System.out.println(index + "." + task.toString());
+                System.out.println(index + "." + task);
                 index++;
             }
         }
@@ -187,6 +190,24 @@ public class TaskList {
             ui.noTaskFoundMessage();
         }
 
+    }
+
+    private String formatDate(String date) {
+        DateTimeFormatter[] inputFormatters = {
+                DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm"),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+        };
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mma");
+        for (DateTimeFormatter formatter : inputFormatters) {
+            try {
+                LocalDateTime dateTime = LocalDateTime.parse(date.trim(), formatter);
+                return dateTime.format(outputFormatter);
+            } catch (DateTimeParseException ignored) {
+
+            }
+        }
+
+        return date;
     }
 
 }
