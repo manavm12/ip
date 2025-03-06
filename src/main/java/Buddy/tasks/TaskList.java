@@ -12,10 +12,8 @@ import Buddy.storage.Storage;
 
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
 
 
 public class TaskList {
@@ -176,10 +174,28 @@ public class TaskList {
         return taskList;
     }
 
+    public void findTask(String input) {
+        String keyword = input.split(" ")[1];
+        ui.findTaskMessage();
+
+        int index = 1;
+        for (Task task : taskList) {
+            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                System.out.println(index + "." + task);
+                index++;
+            }
+        }
+
+        if (index == 1) {
+            ui.noTaskFoundMessage();
+        }
+
+    }
+
     private String formatDate(String date) {
         DateTimeFormatter[] inputFormatters = {
-            DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm"),
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
+                DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm"),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm")
         };
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mma");
         for (DateTimeFormatter formatter : inputFormatters) {
