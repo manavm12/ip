@@ -20,6 +20,12 @@ public class Buddy {
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Starts the chatbot and continuously processes user input.
+     * <p>
+     * This method displays an introduction, processes user commands via {@link Parser},
+     * and runs until the user enters "bye", after which a goodbye message is shown.
+     */
     public void start() {
         ui.setIntroduction();
         String input = scanner.nextLine();

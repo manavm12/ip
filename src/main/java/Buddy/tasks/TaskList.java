@@ -28,27 +28,39 @@ public class TaskList {
         this.taskList = storage.loadTasksFromFile();
     }
 
-    public void addToList(String input) {
-        try {
-            if (input.startsWith("todo")) {
-                addTodo(input);
-            } else if (input.startsWith("deadline")) {
-                addDeadline(input);
-            } else if (input.startsWith("event")) {
-                addEvent(input);
-            } else {
-                throw new UnknownCommandException();
-            }
-
-            storage.saveTasksToFile(taskList);
-            ui.printDivider();
-
-        } catch (BuddyException e) {
-            System.out.println(e.getMessage());
-            ui.printDivider();
+    /**
+     * Adds a task to the task list based on user input.
+     * <p>
+     * Determines the type of task (todo, deadline, or event) and adds it accordingly.
+     * After adding, the updated list is saved to a file.
+     *
+     * @param input The user input specifying the task to be added.
+     * @throws UnknownCommandException If the input does not match any valid task type.
+     */
+    public void addToList(String input) throws BuddyException {
+        if (input.startsWith("todo")) {
+            addTodo(input);
+        } else if (input.startsWith("deadline")) {
+            addDeadline(input);
+        } else if (input.startsWith("event")) {
+            addEvent(input);
+        } else {
+            throw new UnknownCommandException();
         }
+
+        storage.saveTasksToFile(taskList);
+        ui.printDivider();
     }
 
+    /**
+     * Adds a new todo task to the task list.
+     * <p>
+     * Extracts the task description from the input and creates a new {@link Todo} task.
+     * If the input is only "todo" without a description, an exception is thrown.
+     *
+     * @param input The user input specifying the todo task.
+     * @throws EmptyTaskDescriptionException If the task description is missing.
+     */
     private void addTodo(String input) throws EmptyTaskDescriptionException {
         if (input.trim().equals("todo")) {
             throw new EmptyTaskDescriptionException("todo");
@@ -60,6 +72,16 @@ public class TaskList {
         ui.addToListResponse(taskList);
     }
 
+    /**
+     * Adds a new deadline task to the task list.
+     * <p>
+     * Extracts the task description and deadline from the input and creates a new {@link Deadline} task.
+     * If the input lacks a description or is incorrectly formatted, an exception is thrown.
+     *
+     * @param input The user input specifying the deadline task.
+     * @throws EmptyTaskDescriptionException If the task description is missing.
+     * @throws InvalidDeadlineFormatException If the deadline format is incorrect.
+     */
     private void addDeadline(String input) throws EmptyTaskDescriptionException, InvalidDeadlineFormatException {
         if (input.trim().equals("deadline")) {
             throw new EmptyTaskDescriptionException("deadline");
@@ -83,6 +105,17 @@ public class TaskList {
         ui.addToListResponse(taskList);
     }
 
+    /**
+     * Adds a new event task to the task list.
+     * <p>
+     * Extracts the task description, start time, end time from the input
+     * and creates a new {@link Event} task.
+     * If the input lacks a description or is incorrectly formatted, an exception is thrown.
+     *
+     * @param input The user input specifying the deadline task.
+     * @throws EmptyTaskDescriptionException If the task description is missing.
+     * @throws InvalidEventFormatException If the deadline format is incorrect.
+     */
     private void addEvent(String input) throws EmptyTaskDescriptionException, InvalidEventFormatException {
         if (input.trim().equals("event")){
             throw new EmptyTaskDescriptionException("event");
@@ -110,7 +143,17 @@ public class TaskList {
         ui.addToListResponse(taskList);
     }
 
-    public void markTaskAsDone(String input) {
+    /**
+     * Marks a task as completed.
+     * <p>
+     * Retrieves the task at the specified index and marks it as done.
+     * If the index is invalid, an exception is thrown. Saves the updated list to file.
+     *
+     * @param input The user input specifying the task index to mark as done.
+     * @throws InvalidTaskIndexException If the task index is out of range.
+     * @throws NumberFormatException If the input is not a valid number.
+     */
+    public void markTaskAsDone(String input) throws InvalidTaskIndexException {
         try {
             int index = Integer.parseInt(input.split(" ")[1]) - 1;
             if (index < 0 || index >= taskList.size()) {
@@ -123,14 +166,22 @@ public class TaskList {
 
             ui.markTaskResponse(task);
 
-        } catch (InvalidTaskIndexException e) {
-            System.out.println(e.getMessage());
         } catch (NumberFormatException e) {
             ui.markTaskWarning();
         }
     }
 
-    public void unMarkTaskAsDone(String input) {
+    /**
+     * Unmarks a task, indicating the task is incomplete.
+     * <p>
+     * Retrieves the task at the specified index and marks it as not done.
+     * If the index is invalid, an exception is thrown. Saves the updated list to file.
+     *
+     * @param input The user input specifying the task index to unmark.
+     * @throws InvalidTaskIndexException If the task index is out of range.
+     * @throws NumberFormatException If the input is not a valid number.
+     */
+    public void unMarkTaskAsDone(String input) throws InvalidTaskIndexException {
         try {
             int index = Integer.parseInt(input.split(" ")[1]) - 1;
             if (index < 0 || index >= taskList.size()) {
@@ -143,14 +194,22 @@ public class TaskList {
 
             ui.unmarkTaskResponse(task);
 
-        } catch (InvalidTaskIndexException e) {
-            System.out.println(e.getMessage());
         } catch (NumberFormatException e) {
             ui.unmarkTaskWarning();
         }
     }
 
-    public void deleteTasks(String input) {
+    /**
+     * Deletes a task from the task list.
+     * <p>
+     * Retrieves the task at the specified index and removes it from the list.
+     * If the index is invalid, an exception is thrown. Saves the updated list to file.
+     *
+     * @param input The user input specifying the task index to delete.
+     * @throws InvalidTaskIndexException If the task index is out of range.
+     * @throws NumberFormatException If the input is not a valid number.
+     */
+    public void deleteTasks(String input) throws InvalidTaskIndexException {
         try {
             int index = Integer.parseInt(input.split(" ")[1]) - 1;
             if (index < 0 || index >= taskList.size()) {
@@ -163,17 +222,28 @@ public class TaskList {
 
             ui.deleteTaskResponse(task,taskList);
 
-        } catch (InvalidTaskIndexException e) {
-            System.out.println(e.getMessage());
         } catch (NumberFormatException e) {
             ui.deleteTaskWarning();
         }
     }
 
+    /**
+     * Retrieves the current list of tasks.
+     * @return tasklist: The list of tasks.
+     */
     public  ArrayList<Task> getTaskList(){
         return taskList;
     }
 
+    /**
+     * Searches for tasks that contain the given keyword in their description.
+     * <p>
+     * Iterates through the list of tasks and prints all tasks whose description
+     * contains the specified keyword. If no matching tasks are found,
+     * a message is displayed.
+     *
+     * @param input The user input containing the "find" command followed by the keyword.
+     */
     public void findTask(String input) {
         String keyword = input.split(" ")[1];
         ui.findTaskMessage();
@@ -192,6 +262,16 @@ public class TaskList {
 
     }
 
+    /**
+     * Converts a date string from a recognized input format into a readable format.
+     * <p>
+     * The method attempts to parse the input date string using supported formats.
+     * If successful, it returns the date formatted as "MMM dd yyyy, hh:mma".
+     * If the input does not match any expected formats, the original string is returned.
+     *
+     * @param date The date string to be formatted.
+     * @return The formatted date string in "MMM dd yyyy, hh:mma" format, or the original input if parsing fails.
+     */
     private String formatDate(String date) {
         DateTimeFormatter[] inputFormatters = {
                 DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm"),
@@ -206,7 +286,6 @@ public class TaskList {
 
             }
         }
-
         return date;
     }
 
