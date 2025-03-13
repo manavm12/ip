@@ -9,6 +9,7 @@ import Buddy.exceptions.BuddyException;
 
 import Buddy.ui.Ui;
 import Buddy.storage.Storage;
+import Buddy.parser.Parser;
 
 import java.time.format.DateTimeParseException;
 import java.time.format.DateTimeFormatter;
@@ -20,12 +21,14 @@ public class TaskList {
 
     private final Ui ui;
     private final Storage storage;
+    private final Parser parser;
     private final ArrayList<Task> taskList;
 
-    public TaskList(Ui ui, Storage storage) {
+    public TaskList(Ui ui, Storage storage, Parser parser) {
         this.ui = ui;
         this.storage = storage;
         this.taskList = storage.loadTasksFromFile();
+        this.parser = parser;
     }
 
     /**
@@ -87,11 +90,7 @@ public class TaskList {
             throw new EmptyTaskDescriptionException("deadline");
         }
 
-        String[] deadlineDetails = input.substring(9).split("/");
-
-        if (deadlineDetails.length < 2) {
-            throw new InvalidDeadlineFormatException();
-        }
+        String[] deadlineDetails = parser.parseDeadline(input);
 
         String taskName = deadlineDetails[0];
         String taskDeadline = deadlineDetails[1];
@@ -121,11 +120,7 @@ public class TaskList {
             throw new EmptyTaskDescriptionException("event");
         }
 
-        String[] eventDetails = input.substring(6).split("/");
-
-        if (eventDetails.length < 3) {
-            throw new InvalidEventFormatException();
-        }
+        String[] eventDetails = parser.parseEvent(input);
 
         String taskName = eventDetails[0];
         String taskStart = eventDetails[1];
@@ -155,7 +150,7 @@ public class TaskList {
      */
     public void markTaskAsDone(String input) throws InvalidTaskIndexException {
         try {
-            int index = Integer.parseInt(input.split(" ")[1]) - 1;
+            int index = parser.parseTaskIndex(input);
             if (index < 0 || index >= taskList.size()) {
                 throw new InvalidTaskIndexException();
             }
@@ -183,7 +178,7 @@ public class TaskList {
      */
     public void unMarkTaskAsDone(String input) throws InvalidTaskIndexException {
         try {
-            int index = Integer.parseInt(input.split(" ")[1]) - 1;
+            int index = parser.parseTaskIndex(input);
             if (index < 0 || index >= taskList.size()) {
                 throw new InvalidTaskIndexException();
             }
@@ -211,7 +206,7 @@ public class TaskList {
      */
     public void deleteTasks(String input) throws InvalidTaskIndexException {
         try {
-            int index = Integer.parseInt(input.split(" ")[1]) - 1;
+            int index = parser.parseTaskIndex(input);
             if (index < 0 || index >= taskList.size()) {
                 throw new InvalidTaskIndexException();
             }
@@ -229,7 +224,7 @@ public class TaskList {
 
     /**
      * Retrieves the current list of tasks.
-     * @return tasklist: The list of tasks.
+     * @return The list of tasks.
      */
     public  ArrayList<Task> getTaskList(){
         return taskList;
